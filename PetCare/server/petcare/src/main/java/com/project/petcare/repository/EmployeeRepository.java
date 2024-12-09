@@ -7,79 +7,84 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.math.BigDecimal;
 
 import com.project.petcare.entity.Employee;
 
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+public interface EmployeeRepository extends JpaRepository<Employee, String> {
     @Override
-    @Query("select e from Employee e where e.isDel = false")
-    public List<Employee> findAll();
+    @Query("SELECT e FROM Employee e WHERE e.isDel = false")
+    public List<Employee> findAll(); // Fetch only active employees
 
-    @Query("SELECT e FROM Employee e WHERE e.id= ?1")
-    public Employee findEmployee(Integer id);
+    @Query("SELECT e FROM Employee e WHERE e.id = ?1 AND e.isDel = false")
+    public Employee findEmployee(String id); // Fetch employee by ID, ensuring it's not marked as deleted
 
-    @Query("select e.isDel from Employee e where e.email = ?1")
-    public Boolean checkIsDel(String email);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE Employee e set e.cccd = ?1 where e.id = ?2")
-    public void updateCCCD(String cccd, Integer id);
+    @Query("SELECT e.isDel FROM Employee e WHERE e.email = ?1")
+    public Boolean checkIsDel(String email); // Check if an employee is logically deleted by email
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.place = ?1 where e.id = ?2")
-    public void updatePlace(String place, Integer id);
+    @Query("UPDATE Employee e SET e.cccd = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateCCCD(String cccd, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.date = ?1 where e.id = ?2")
-    public void updateDate(LocalDate date, Integer id);
+    @Query("UPDATE Employee e SET e.placeOfIssue = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updatePlace(String placeOfIssue, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.bdate = ?1 where e.id = ?2")
-    public void updateBDate(LocalDate bDate, Integer id);
+    @Query("UPDATE Employee e SET e.issueDate = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateDate(LocalDate issueDate, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.sex = ?1 where e.id = ?2")
-    public void updateSex(String sex, Integer id);
+    @Query("UPDATE Employee e SET e.birthDate = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateBDate(LocalDate birthDate, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.phoneNum = ?1 where e.id = ?2")
-    public void updatePhoneNum(String phoneNum, Integer id);
+    @Query("UPDATE Employee e SET e.gender = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateSex(String gender, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.firstName = ?1 where e.id = ?2")
-    public void updateFName(String firstName, Integer id);
+    @Query("UPDATE Employee e SET e.phoneNumber = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updatePhoneNum(String phoneNumber, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.lastName = ?1 where e.id = ?2")
-    public void updateLName(String lastName, Integer id);
+    @Query("UPDATE Employee e SET e.firstName = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateFName(String firstName, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.address = ?1 where e.id = ?2")
-    public void updateAddress(String address, Integer id);
+    @Query("UPDATE Employee e SET e.middleAndLastName = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateLName(String middleAndLastName, String id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee e set e.email = ?1 where e.id = ?2")
-    public void updateEmail(String email, Integer id);
+    @Query("UPDATE Employee e SET e.salary = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateSalary(BigDecimal salary, String id);
 
-    @Query("select e from Employee e where e.cccd = ?1")
-    public Employee findEmpByCccd(String cccd);
+    @Transactional
+    @Modifying
+    @Query("UPDATE Employee e SET e.managerId = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateManager(String managerId, String id);
 
-    @Query("SELECT CONCAT(e.firstName, ' ', e.lastName) AS employeeName " +
-            "FROM Employee e " +
-            "WHERE e.id = ?1")
-    public String findEmployeeWithHighestOrders(Integer employeeId);
+    @Transactional
+    @Modifying
+    @Query("UPDATE Employee e SET e.email = ?1 WHERE e.id = ?2 AND e.isDel = false")
+    public void updateEmail(String email, String id);
 
+    @Query("SELECT e FROM Employee e WHERE e.cccd = ?1 AND e.isDel = false")
+    public Employee findEmpByCccd(String cccd); // Find employee by CCCD, ensuring it's not deleted
+
+    @Query("SELECT CONCAT(e.middleAndLastName, ' ', e.firstName) AS employeeName " +
+           "FROM Employee e " +
+           "WHERE e.id = ?1 AND e.isDel = false")
+    public String findEmployeeWithHighestOrders(Integer employeeId); // Fetch employee's name if active
 }

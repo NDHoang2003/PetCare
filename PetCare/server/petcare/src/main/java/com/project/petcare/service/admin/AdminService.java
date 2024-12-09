@@ -8,11 +8,9 @@ import com.project.petcare.entity.Employee;
 
 @Service
 public interface AdminService {
-    public List<Employee> listOfEmployee();
-    public Employee saveEmp(Employee emp);
-    public Employee findEmployee(Integer id);
-    public Employee delEmp(Integer id);
-    // public Employee updateEmp(Integer id, String pos, String role);
-
-    public void updateEmp(Integer id, Employee newEmp);
+    List<Employee> listOfEmployee();
+    Employee saveEmp(Employee emp);
+    Employee findEmployee(String id);
+    Employee delEmp(String id);
+    Employee updateEmp(String id, Employee newEmp);
 }

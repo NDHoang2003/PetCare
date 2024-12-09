@@ -1,13 +1,13 @@
 package com.project.petcare.service.admin;
 
-import java.sql.SQLException;
+// import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.petcare.entity.Employee;
-import com.project.petcare.entity.User;
+// import com.project.petcare.entity.User;
 import com.project.petcare.repository.EmployeeRepository;
 import com.project.petcare.repository.UserRepository;
 
@@ -26,25 +26,30 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Employee saveEmp(Employee emp) {
-        if (adminRepository.findEmpByCccd(emp.getCccd()) != null) return null;
-        emp.setIsDel(false);
-        Employee newEmp = adminRepository.save(emp);
-        if (newEmp != null) {
-            User newUser = new User(newEmp.getEmail(), "123456789");
-            newUser = userRepository.save(newUser);
-            newEmp.setUser(newUser);
-            newEmp = adminRepository.save(newEmp);
+        // Check for duplicate CCCD before saving
+        if (adminRepository.findEmpByCccd(emp.getCccd()) != null) {
+            return null;
         }
+        emp.setIsDel(false); // Default isDel to false (active employee)
+        Employee newEmp = adminRepository.save(emp);
+
+        // Temporarily disable user creation
+        // if (newEmp != null) {
+        //     User newUser = new User(newEmp.getEmail(), "123456789");
+        //     newUser = userRepository.save(newUser);
+        //     newEmp.setUser(newUser);
+        //     newEmp = employeeRepository.save(newEmp);
+        // }
         return newEmp;
     }
 
     @Override
-    public Employee findEmployee(Integer id) {
+    public Employee findEmployee(String id) {
         return adminRepository.findEmployee(id);
     }
 
     @Override
-    public Employee delEmp(Integer id) {
+    public Employee delEmp(String id) {
         Employee findEmployee = adminRepository.findEmployee(id);
         findEmployee.setIsDel(true);
         adminRepository.save(findEmployee);
@@ -54,9 +59,13 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public void updateEmp(Integer id, Employee newEmp) {
-        newEmp.setId(id);
-        adminRepository.save(newEmp);
+    public Employee updateEmp(String id, Employee newEmp) {
+        Employee existingEmp = adminRepository.findEmployee(id);
+        if (existingEmp != null) {
+            existingEmp.updateEmployee(newEmp); // Update fields using Employee's method
+            return adminRepository.save(existingEmp); // Save and return updated employee
+        }
+        return null;
         // adminRepository.updateAddress(newEmp.getAddress(), id);
         // adminRepository.updateBDate(newEmp.getBdate(), id);
         // adminRepository.updateCCCD(newEmp.getCccd(), id);

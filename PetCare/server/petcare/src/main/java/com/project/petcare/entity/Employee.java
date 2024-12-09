@@ -9,90 +9,84 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.math.BigDecimal;
 
 
-//Còn thiếu status??? * 
-//-------
 @Entity
-@Table(name = "Employee")
+@Table(name = "nhan_vien") 
 @NoArgsConstructor
 @Getter
 @Setter
 public class Employee {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "NVid", length = 10)
+    private String id; 
 
+    @Column(name = "CCCD", length = 12, unique = true)
+    private String cccd; 
 
-    @Column(name = "CCCD", length = 20, unique = true)
-    private String cccd;
+    @Column(name = "NoiCap", length = 3)
+    private String placeOfIssue; 
 
-    @Column(name = "place")
-    private String place;
-
-    @Column(name = "cccdDate")
+    @Column(name = "NgayCap")
     @Temporal(TemporalType.DATE)
-    private LocalDate date;
+    private LocalDate issueDate;
 
-    @Column(name = "bdate")
+    @Column(name = "GioiTinh", length = 6)
+    private String gender;
+
+    @Column(name = "SDT", length = 10)
+    private String phoneNumber; 
+
+    @Column(name = "HoVaTenDem", length = 30)
+    private String middleAndLastName; 
+
+    @Column(name = "Ten", length = 20)
+    private String firstName; 
+    @Column(name = "MucLuong", precision = 10, scale = 2)
+    private BigDecimal salary; 
+
+    @Column(name = "QuanLiid", length = 10)
+    private String managerId;
+
+    @Column(name = "NgaySinh")
     @Temporal(TemporalType.DATE)
-    private LocalDate bdate;
+    private LocalDate birthDate;
 
-    @Column(name = "gender")
-    private String sex;
-
-    @Column(name = "phone_num", length = 13)
-    private String phoneNum;
-
-    @Column(name = "first_name",length = 50)
-    private String firstName;
-
-    @Column(name = "last_name",length = 10)
-    private String lastName;
-
-    @Column(name = "address",length = 50)
-    private String address;
-    
-    private Boolean isDel;
-
-    @Column(name = "email", length =50)
-    private String email;
+    @Column(name = "isDel", nullable = false)
+    private Boolean isDel = false;
 
     @OneToMany(mappedBy = "employee")
     @JsonIgnore
-    private List<Order> order;
+    private List<Order> orders; 
 
-    @OneToOne
-    // @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonIgnore
-    private User user;
-
-    public Employee(String cccd, String place, LocalDate date, String sex, String phoneNum,
-            String firstName, String lastName, String address, String email, LocalDate bDate) {
+    public Employee(String id, String cccd, String placeOfIssue, LocalDate issueDate, String gender, String phoneNumber,
+                    String middleAndLastName, String firstName, BigDecimal salary, String managerId, LocalDate birthDate) {
+        this.id = id;
         this.cccd = cccd;
-        this.place = place;
-        this.date = date;
-        this.sex = sex;
-        this.phoneNum = phoneNum;
+        this.placeOfIssue = placeOfIssue;
+        this.issueDate = issueDate;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.middleAndLastName = middleAndLastName;
         this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.email = email;
-        this.bdate = bDate;
+        this.salary = salary;
+        this.managerId = managerId;
+        this.birthDate = birthDate;
+        this.isDel = false;
     }
-    
-    public void updateEmp (Employee newEmployee){
-        this.address = newEmployee.getAddress();
+
+    public void updateEmployee(Employee newEmployee) {
         this.cccd = newEmployee.getCccd();
-        this.date = newEmployee.getDate();
+        this.placeOfIssue = newEmployee.getPlaceOfIssue();
+        this.issueDate = newEmployee.getIssueDate();
+        this.gender = newEmployee.getGender();
+        this.phoneNumber = newEmployee.getPhoneNumber();
+        this.middleAndLastName = newEmployee.getMiddleAndLastName();
         this.firstName = newEmployee.getFirstName();
-        this.lastName = newEmployee.getLastName();
-        this.phoneNum = newEmployee.getPhoneNum();
-        this.place = newEmployee.getPlace();
-        this.sex = newEmployee.getSex();
-        this.email = newEmployee.getEmail();
-        this.bdate = newEmployee.getBdate();
+        this.salary = newEmployee.getSalary();
+        this.managerId = newEmployee.getManagerId();
+        this.birthDate = newEmployee.getBirthDate();
+        this.isDel = newEmployee.getIsDel();
     }
-
-
 }

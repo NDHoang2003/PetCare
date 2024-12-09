@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,41 +19,47 @@ import com.project.petcare.service.admin.AdminService;
 
 @CrossOrigin
 @RestController
+@RequestMapping("/admin")
 public class AdminController {
-    @Autowired
-    AdminService adminService;
 
-    @GetMapping("/admin/home")
-    public String adminHome(){
-        return "this is adminHome";
+    @Autowired
+    private AdminService adminService;
+
+    @GetMapping("/home")
+    public String adminHome() {
+        return "This is adminHome";
     }
 
-    @GetMapping("/admin/all_employee")
-    public List<Employee> listOfEmployee(){
+    @GetMapping("/all_employee")
+    public List<Employee> listOfEmployee() {
         return adminService.listOfEmployee();
     }
 
-    @PostMapping("/admin/employee")
-    public ResponseEntity<Employee> addEmployee (@RequestBody Employee emp){
+    @PostMapping("/employee")
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee emp) {
         Employee savedEmp = adminService.saveEmp(emp);
         if (savedEmp != null) return ResponseEntity.ok(savedEmp);
-        return ResponseEntity.badRequest().body(null) ;
+        return ResponseEntity.badRequest().body(null);
     }
 
-    @GetMapping("/admin/employee")
-    public Employee employeeDetails(@RequestParam(name = "id") Integer id){
-        return adminService.findEmployee(id);
+    @GetMapping("/employee")
+    public ResponseEntity<Employee> employeeDetails(@RequestParam(name = "id") String id) {
+        Employee employee = adminService.findEmployee(id);
+        if (employee != null) return ResponseEntity.ok(employee);
+        return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/admin/employee")
-    public Employee deleteEmployee(@RequestParam(name = "id") Integer id){
-        return adminService.delEmp(id);
+    @DeleteMapping("/employee")
+    public ResponseEntity<Employee> deleteEmployee(@RequestParam(name = "id") String id) {
+        Employee deletedEmployee = adminService.delEmp(id);
+        if (deletedEmployee != null) return ResponseEntity.ok(deletedEmployee);
+        return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/admin/employee")
-    public Employee updateInfEmployee(@RequestParam(name = "id") Integer id, @RequestBody Employee newEmployee){
-        adminService.updateEmp(id, newEmployee);
-        return newEmployee;
+    @PutMapping("/employee")
+    public ResponseEntity<Employee> updateEmployee(@RequestParam(name = "id") String id, @RequestBody Employee newEmployee) {
+        Employee updatedEmployee = adminService.updateEmp(id, newEmployee);
+        if (updatedEmployee != null) return ResponseEntity.ok(updatedEmployee);
+        return ResponseEntity.notFound().build();
     }
-
 }
